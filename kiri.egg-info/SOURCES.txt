@@ -1,0 +1,5 @@
+pyproject.toml
+kiri.egg-info/PKG-INFO
+kiri.egg-info/SOURCES.txt
+kiri.egg-info/dependency_links.txt
+kiri.egg-info/top_level.txt

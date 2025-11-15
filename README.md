@@ -2,8 +2,8 @@
 
 A small, perceptive robotic creature with curiosity, presence-awareness, and expressive motion.
 
-KIRI is a tiny kinetic creature that wakes up, looks around, recognizes familiar faces, greets returning humans, reacts with subtle gestures, and can chat using an LLM.
-It is designed to feel alive — not humanoid, not cartoonish — but like a small intelligent animal or house spirit.
+KIRI, think of a tiny kinetic creature that wakes up, looks around, recognizes familiar faces, greets returning humans, reacts with subtle gestures, and can chat using an LLM.
+Designed to feel alive — not humanoid, not cartoonish — but like a small intelligent animal or house spirit.
 
 **KIRI is powered by KIRI Core**, a modular framework for interactive robotic intelligence.
 
@@ -11,16 +11,16 @@ It is designed to feel alive — not humanoid, not cartoonish — but like a sma
 
 KIRI is a perceptive, expressive, behavior-driven micro-robot running on a Raspberry Pi with:
 
-- a pan–tilt head (servos)
-- a camera (IMX500 or PiCam2)
+- a pan–tilt head
+- a camera (IMX500 / PiCam2)
 - local TTS (Piper)
-- face recognition
+- face recognition (yunet)
 - presence tracking
 - expressive gestures
-- wake/sleep rituals
-- optional LLM-based conversation
+- animated wake/sleep rituals
+- LLM-based conversation
 
-KIRI behaves like a small curious creature — a cross between:
+KIRI (is intended to) behave like a small curious creature — a cross between:
 
 - a pika
 - an otter
@@ -45,9 +45,7 @@ Instead, KIRI behaves like a tiny, perceptive creature that shares your space.
 
 ## 🧠 What is KIRI Core?
 
-KIRI Core stands for:
-
-**Kernel for Interactive Robotic Intelligence**
+Kernel for Interactive Robotic Intelligence**
 
 It is the underlying framework that powers KIRI's:
 
@@ -99,36 +97,7 @@ kiri/
 └── pyproject.toml            # makes KIRI installable (pip install -e .)
 ```
 
-## 🌅 Wake-Up Routine
 
-KIRI's wake-up is a core part of its charm.
-When started, KIRI:
-
-1. Centers its head
-2. Performs a tiny "stretch" nod
-3. Says: "Hi, I'm Kiri."
-4. Slowly looks left and right
-5. Performs a small jitter adjustment
-6. Enters idle state, ready to perceive
-
-This routine lives in:
-```
-kiri/modules/routines.py
-```
-
-and uses motion primitives from:
-```
-kiri/modules/motions.py
-```
-
-## 🌙 Sleep Routine
-
-Planned for v0.2 — KIRI will:
-
-1. lower its head
-2. say a soft goodnight phrase
-3. make a tiny settling gesture
-4. close down gracefully
 
 ## 🔍 Presence & Greeting Logic
 
@@ -169,15 +138,13 @@ Handled via the Event Bus:
 
 ## 🎤 Audio System
 
-KIRI uses Piper TTS, with intelligent output routing:
-
-**Priority:**
+KIRI uses Piper TTS, with prio-based output routing:
 
 1. USB speaker on `hw:2,0`
 2. Bluetooth A2DP sink
 3. Default PulseAudio/pipewire sink
 
-This guarantees KIRI always has a voice.
+This should guarantee that KIRI always has a voice.
 
 ## 🐾 Motion Philosophy
 
@@ -193,7 +160,7 @@ Movements should feel alive, non-robotic, and gently expressive.
 
 ## 🤖 Chatting With KIRI
 
-The module `llm_agent.py` will handle:
+The module `llm_agent.py` handles:
 
 - LLM interactions
 - contextual conversation
@@ -202,19 +169,11 @@ The module `llm_agent.py` will handle:
 
 Using streaming models from OpenAI, Groq, or local models.
 
-## 🧪 Running Tests
 
-Example:
-
-```bash
-python3 scripts/test_wakeup.py
-```
-
-KIRI should wake up, greet, and scan the room.
 
 ## 🔮 Roadmap
 
-### v0.1 — Foundations (NOW)
+### v0.1 — Foundations
 
 - KIRI naming & identity
 - Package structure
@@ -459,6 +418,6 @@ You should see:
 
 ## 🎉 Installation Complete
 
-KIRI is alive.
+Now KIRI is alive.
 You officially have a tiny mythological house spirit living in your Raspberry Pi.
-# kiri
+

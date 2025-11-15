@@ -1,0 +1,8 @@
+[project]
+name = "kiri"
+version = "0.1.0"
+description = "KIRI Core – Kernel for Interactive Robotic Intelligence"
+authors = [{name="Johan Müllern-Aspegren"}]
+
+[tool.setuptools]
+packages = ["kiri"]
