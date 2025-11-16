@@ -68,10 +68,13 @@ class SwivelController:
     # --- low-level send ---
     def _send(self, line: str) -> str:
         if not self._ser:
-            raise RuntimeError("Serial not open. Use .open() or a context manager.")
-        self._ser.write((line.strip() + "\n").encode("ascii", errors="ignore"))
+            raise RuntimeError("Serial not open. Use .open().")
+
+        print(f"[SW SEND] {line.strip()}")   # <<< ADD THIS
+        self._ser.write((line.strip() + "\n").encode("ascii"))
         time.sleep(0.03)
         resp = self._ser.readline().decode(errors="ignore").strip()
+        print(f"[SW RESP] {resp}")           # <<< AND THIS
         return resp
 
     # --- high-level API ---

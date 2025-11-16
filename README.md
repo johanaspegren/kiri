@@ -260,7 +260,8 @@ sudo apt install -y \
 
 ### 2️⃣ Create Virtual Environment
 
-We strongly recommend allowing system packages (for speed):
+We strongly recommend allowing system packages (for speed and picamera):
+DO NOT INSTALL pip picamera!!
 
 ```bash
 python3 -m venv .venv --system-site-packages

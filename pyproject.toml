@@ -1,5 +1,5 @@
 [project]
-name = "kiri"
+name = "kiri_core"
 version = "0.1.0"
 description = "KIRI Core – Kernel for Interactive Robotic Intelligence"
 authors = [{name="Johan Müllern-Aspegren"}]
