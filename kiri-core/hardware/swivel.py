@@ -70,11 +70,13 @@ class SwivelController:
         if not self._ser:
             raise RuntimeError("Serial not open. Use .open().")
 
-        print(f"[SW SEND] {line.strip()}")   # <<< ADD THIS
+        # Send immediately
         self._ser.write((line.strip() + "\n").encode("ascii"))
-        time.sleep(0.03)
+
+        # Non-blocking read (timeout=0 means return instantly)
+        self._ser.timeout = 0
         resp = self._ser.readline().decode(errors="ignore").strip()
-        print(f"[SW RESP] {resp}")           # <<< AND THIS
+
         return resp
 
     # --- high-level API ---
