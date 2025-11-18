@@ -4,6 +4,7 @@ import cv2
 
 from hardware.swivel import SwivelController
 from motion.swivel_motion import SwivelMotion
+from motion.swivel_stable import SwivelMotionStable
 from behaviour.track_face import TrackFace
 from perception.face_provider import get_best_face
 from perception.face_refiner import FaceRefiner
@@ -42,14 +43,16 @@ async def main():
     fr = FaceRefiner(YUNET)
 
     sw = SwivelController().open()
-    motion = SwivelMotion(sw)
-    asyncio.create_task(motion.loop())
+    raw_motion = SwivelMotion(sw)        # your original class
+    motion = SwivelMotionStable(raw_motion)
+
+    asyncio.create_task(raw_motion.loop())
 
     tracker = TrackFace(
         motion=motion,
         get_face_fn=lambda: get_best_face(state),
-        pan_gain=-30.0,
-        tilt_gain=+25.0
+        pan_gain=-40.0,
+        tilt_gain=+35.0
     )
     asyncio.create_task(tracker.loop())
 

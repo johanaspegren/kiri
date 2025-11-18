@@ -1,3 +1,270 @@
+
+🐾 KIRI — A Tiny Curious Companion Powered by KIRI Core
+
+A small embodied AI creature running on Raspberry Pi 5 with an IMX500 neural camera, expressive motion, and a very small attention span.
+
+🌟 Overview
+
+KIRI is a micro-robotic creature built to feel curious, perceptive, and alive.
+It lives on:
+
+Raspberry Pi 5
+
+IMX500 neural imaging sensor
+
+Pan–tilt head with Arduino servo driver
+
+Local TTS (Piper)
+
+CPU face detection (YuNet)
+
+Behaviour-driven motion
+
+LLM conversational brain (optional)
+
+KIRI is not humanoid.
+It is not a cartoon.
+It is more like a small house spirit that is mildly surprised to discover you exist.
+
+🧠 KIRI Core — Architecture
+
+KIRI Core is the modular framework behind:
+
+Perception
+
+Motion
+
+Behaviour
+
+Audio
+
+State management
+
+Integrations (LLM, IMX500 detections, etc.)
+
+The architecture is intentionally simple, asynchronous, and fault-tolerant.
+
+🗺️ High-Level Architecture Diagram
+                   ┌────────────────────────────────────────┐
+                   │                KIRI CORE                │
+                   └────────────────────────────────────────┘
+                                  ▲               ▲
+                 Perception       │               │     Behaviour
+                                  │               │
+                                  │               │
+
+         ┌──────────────────────┐ │   ┌──────────────────────────────┐
+         │   Picamera2 (RGB)    │ │   │        Behaviour Loops        │
+         │  640×480 stable feed │ │   │  - TrackFace                  │
+         └──────────────────────┘ │   │  - WakeUp / Sleep             │
+                 │                │   │  - CuriousScan                │
+     CPU Face Detection (YuNet)   │   └──────────────────────────────┘
+                 │                │                │
+                 ▼                │                ▼
+
+       ┌───────────────────┐      │     ┌────────────────────────┐
+       │  FACE REFINER     │──────┘     │     SwivelMotion        │
+       └───────────────────┘            │ (smooth servo control)  │
+                 │                      └────────────────────────┘
+                 ▼                                │
+        Shared State (frame + faces)              ▼
+                 │                      ┌──────────────────────┐
+                 │                      │  SwivelController    │
+                 │                      │ (Arduino servo board)│
+                 │                      └──────────────────────┘
+                 ▼
+      ┌────────────────────────┐
+      │    IMX500 Detector     │
+      │ (neural metadata only) │
+      └────────────────────────┘
+                 │
+      Object detection, cues,
+     ambient awareness (future)
+
+📸 Camera Architecture — Why It Works This Way
+
+This part is crucial for stability and future-proofing.
+
+✔ 1. Picamera2 provides ALL imaging
+
+YuNet (face detector) needs:
+
+Correct RGB
+
+Predictable resolution
+
+No overlays
+
+No aspect-ratio trickery
+
+Using IMX500 frames for CPU vision results in:
+
+lag
+
+bounding-box drift
+
+servo “tornado mode”
+
+IMX firmware upload stalls
+
+general emotional distress
+
+Therefore:
+All OpenCV-based detection uses Picamera2 at 640×480 RGB.
+
+This gives perfectly stable geometry → perfectly stable tracking.
+
+✔ 2. IMX500 is used for neural inference ONLY
+
+The IMX500 is not a camera.
+It is a camera-shaped neural chip.
+
+We use it only for:
+
+onboard object detection
+
+low-CPU awareness
+
+future cues (person, pet, object, light, “presence”)
+
+We never use its RGB output.
+
+This matches Sony’s reference design and avoids:
+
+DMA contention
+
+allocator crashes
+
+double-stream conflicts
+
+Raspberry Pi kernel panics (the fun kind)
+
+✔ 3. Behaviour and motion depend on stable perception
+
+Servo behaviour only works when fed:
+
+stable bounding boxes
+
+consistent timing
+
+clean frames
+
+By separating IMX500 metadata from Picamera2 imaging:
+
+tracking stops oscillating
+
+gaze stabilises
+
+KIRI behaves like a creature instead of an industrial fan
+
+✔ 4. This design is modular and future-safe
+
+Because the camera and detection systems are disentangled:
+
+You can add gesture recognition
+
+or IMX-based “curiosity triggers”
+
+or person recognition
+
+or ambient detection
+
+or LLM multimodal reasoning
+
+without rewriting the core.
+
+🧱 Project Structure
+kiri-core/
+│
+├── hardware/
+│   ├── swivel.py             # Arduino servo interface
+│   ├── imx500_detector.py    # Neural inference module
+│
+├── motion/
+│   └── swivel_motion.py      # Smooth, async servo control
+│
+├── perception/
+│   ├── face_refiner.py       # YuNet face detector
+│   ├── face_provider.py      # Best-face selection
+│   └── preview.py            # Local or web visualisation
+│
+├── behaviour/
+│   ├── track_face.py         # Gaze tracking behaviour
+│   └── wakeup.py             # Waking ritual
+│
+├── runtime/
+│   ├── event_bus.py          # Publish/subscribe system
+│   ├── audio_manager.py      # Piper TTS
+│   ├── web_preview.py        # JPEG streaming server
+│
+└── config/
+    └── models.py             # Paths to YuNet/embedders/etc.
+
+🏃‍♂️ Running the System
+Minimal test:
+python labs/face_detect_test.py
+
+Full creature mode:
+python labs/test_face_tracker.py
+
+
+Once running:
+
+See live preview at
+http://raspberrypi.local:8080
+
+KIRI will track your face
+
+Servo motion is smooth
+
+IMX500 draws detection boxes
+
+YuNet feeds the behaviour system
+
+🔮 Future Additions (fully supported by this architecture)
+
+IMX500-based ambient curiosity detection
+
+“Look-at-sound” microphone localisation
+
+Emotional micro-movements (breathing, twitching)
+
+LLM-based attention redirection
+
+Person recognition + friendly greetings
+
+Object-of-interest tracking
+
+Scene curiosity scoring
+
+KIRI is tiny, but the roadmap is not.
+
+📜 Why This Architecture Wins
+
+Stable
+
+Predictable
+
+Expandable
+
+Uses IMX500 as intended
+
+Keeps high-frequency control loops responsive
+
+Avoids frame format hell
+
+Fully asynchronous
+
+Behaviour-driven (creature-like)
+
+Most importantly:
+
+It prevents KIRI from spinning wildly while claiming confidently that your face is “somewhere behind the radiator.”
+
+
+
+
+
 # ⭐ KIRI — A Tiny Curious Companion Powered by KIRI Core
 
 A small, perceptive robotic creature with curiosity, presence-awareness, and expressive motion.
